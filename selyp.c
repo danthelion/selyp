@@ -304,6 +304,9 @@ lval* builtin_len(lval* a) {
     LASSERT(a, a->count == 1, "len takes exactly 1 parameter");
 
     lval* v = lval_take(a, 0);
+
+    LASSERT(v, v->type == LVAL_QEXPR,
+            "Invalid type for function 'len'.");
     
     /* Construct a lval* to hold the length of the input */
     lval* x = NULL;
@@ -323,6 +326,8 @@ lval* builtin_cons(lval* a) {
     return x;
 }
 
+lval* builtin_init(lval* a) {};
+
 lval* builtin(lval* a, char* func) {
   if (strcmp("list", func) == 0) { return builtin_list(a); }
   if (strcmp("head", func) == 0) { return builtin_head(a); }
@@ -330,6 +335,7 @@ lval* builtin(lval* a, char* func) {
   if (strcmp("join", func) == 0) { return builtin_join(a); }
   if (strcmp("cons", func) == 0) { return builtin_cons(a); }
   if (strcmp("len", func) == 0) { return builtin_len(a); }
+  if (strcmp("init", func) == 0) { return builtin_init(a); }
   if (strcmp("eval", func) == 0) { return builtin_eval(a); }
   if (strstr("+-/*", func)) { return builtin_op(a, func); }
   lval_del(a);
@@ -419,7 +425,7 @@ int main(int argc, char** argv) {
     "                                                       \
       number : /[-+]?([0-9]*[.])?[0-9]+/ ;                  \
       symbol : \"list\" | \"head\" | \"tail\"               \
-      | \"join\" | \"cons\" | \"eval\" | \"len\"            \
+      | \"join\" | \"cons\" | \"eval\" | \"len\" | \"init\" \
       | '+' | '-' | '*' | '/' | '%' ;                       \
       sexpr  : '(' <expr>* ')' ;                            \
       qexpr  : '{' <expr>* '}' ;                            \
