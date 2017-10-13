@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
 #include "mpc.h"
 
 /* If we are compiling on Windows compile these functions */
@@ -378,6 +380,7 @@ lval *builtin_op(lenv *e, lval *a, char *op) {
         if (strcmp(op, "+") == 0) { x->num += y->num; }
         if (strcmp(op, "-") == 0) { x->num -= y->num; }
         if (strcmp(op, "*") == 0) { x->num *= y->num; }
+        if (strcmp(op, "^") == 0) { x->num = pow(x->num, y->num); }
         if (strcmp(op, "%") == 0) {
             if (y->num == 0) {
                 lval_del(x);
@@ -420,6 +423,14 @@ lval *builtin_mul(lenv *e, lval *a) {
 
 lval *builtin_div(lenv *e, lval *a) {
     return builtin_op(e, a, "/");
+}
+
+lval *builtin_mod(lenv *e, lval *a) {
+    return builtin_op(e, a, "%");
+}
+
+lval *builtin_pow(lenv *e, lval *a) {
+    return builtin_op(e, a, "^");
 }
 
 lval *builtin_head(lenv *e, lval *a) {
@@ -586,6 +597,8 @@ void lenv_add_builtins(lenv *e) {
     lenv_add_builtin(e, "-", builtin_sub);
     lenv_add_builtin(e, "*", builtin_mul);
     lenv_add_builtin(e, "/", builtin_div);
+    lenv_add_builtin(e, "%", builtin_mod);
+    lenv_add_builtin(e, "^", builtin_pow);
 
     /* Variable Functions */
     lenv_add_builtin(e, "def", builtin_def);
@@ -679,7 +692,7 @@ int main(int argc, char **argv) {
     mpca_lang(MPCA_LANG_DEFAULT,
               "                                                       \
       number : /[-+]?([0-9]*[.])?[0-9]+/ ;                  \
-      symbol : /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&]+/ ;           \
+      symbol : /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&%^]+/ ;           \
       sexpr  : '(' <expr>* ')' ;                            \
       qexpr  : '{' <expr>* '}' ;                            \
       expr   : <number> | <symbol> | <sexpr> | <qexpr> ;    \
