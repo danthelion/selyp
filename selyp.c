@@ -33,6 +33,7 @@ void add_history(char *unused) {}
 #endif
 #endif
 
+/* Error handling Macro */
 #define LASSERT(args, cond, fmt, ...) \
   if (!(cond)) { \
     lval* err = lval_err(fmt, ##__VA_ARGS__); \
@@ -47,10 +48,13 @@ struct lenv;
 typedef struct lval lval;
 typedef struct lenv lenv;
 
+/* Lisp Values */
+
 enum {
-    LVAL_ERR, LVAL_NUM, LVAL_SYM,
-    LVAL_FUN, LVAL_SEXPR, LVAL_QEXPR
+    LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_FUN, LVAL_SEXPR, LVAL_QEXPR
 };
+
+/* Map Lisp Values to string names */
 
 char *ltype_name(int t) {
     switch (t) {
@@ -91,6 +95,7 @@ struct lenv {
 
 /* Environment related functions */
 
+/* Create a new environment */
 lenv *lenv_new(void) {
     lenv *e = malloc(sizeof(lenv));
     e->count = 0;
@@ -114,7 +119,7 @@ lval *lval_copy(lval *v) {
             x->num = v->num;
             break;
 
-            /* Copy Strings using malloc and strcpy */
+        /* Copy Strings using malloc and strcpy */
         case LVAL_ERR:
             x->err = malloc(strlen(v->err) + 1);
             strcpy(x->err, v->err);
@@ -125,7 +130,7 @@ lval *lval_copy(lval *v) {
             strcpy(x->sym, v->sym);
             break;
 
-            /* Copy Lists by copying each sub-expression */
+        /* Copy Lists by copying each sub-expression */
         case LVAL_SEXPR:
         case LVAL_QEXPR:
             x->count = v->count;
@@ -135,12 +140,10 @@ lval *lval_copy(lval *v) {
             }
             break;
     }
-
     return x;
 }
 
 void lval_del(lval *v) {
-
     switch (v->type) {
         case LVAL_NUM:
             break;
@@ -160,7 +163,6 @@ void lval_del(lval *v) {
             free(v->cell);
             break;
     }
-
     free(v);
 }
 
@@ -198,7 +200,6 @@ lval *lval_err(char *fmt, ...) {
 }
 
 lval *lenv_get(lenv *e, lval *k) {
-
     /* Iterate over all items in environment */
     for (int i = 0; i < e->count; i++) {
         /* Check if the stored string matches the symbol string */
@@ -212,7 +213,6 @@ lval *lenv_get(lenv *e, lval *k) {
 }
 
 void lenv_put(lenv *e, lval *k, lval *v) {
-
     /* Iterate over all items in environment */
     /* This is to see if variable already exists */
     for (int i = 0; i < e->count; i++) {
@@ -408,6 +408,8 @@ lval *builtin_op(lenv *e, lval *a, char *op) {
     lval_del(a);
     return x;
 }
+
+/* Builtin functions */
 
 lval *builtin_add(lenv *e, lval *a) {
     return builtin_op(e, a, "+");
@@ -703,6 +705,7 @@ int main(int argc, char **argv) {
     puts("Selyp Version 0.0.0.0.1");
     puts("Press Ctrl+c to Exit\n");
 
+    /* Create a new environment and add builtin functions */
     lenv *e = lenv_new();
     lenv_add_builtins(e);
 
