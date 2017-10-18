@@ -3,9 +3,16 @@ A Lisp interpreter implemented in C.
 
 Based on http://www.buildyourownlisp.com.
 
+## Dependencies
+
+* https://github.com/orangeduck/mpc
+
 ## Build
 ```
-$ git clone git@github.com:orangeduck/mpc.git
+$ cmake .
+```
+or
+```
 $ cc -std=99 -Wall selyp.c mpc.c -leddit -o selyp
 ```
 ## Run

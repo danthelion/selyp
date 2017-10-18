@@ -738,7 +738,6 @@ void lenv_add_builtins(lenv *e) {
 }
 
 lval *lval_call(lenv *e, lval *f, lval *a) {
-
     /* If Builtin then simply apply that */
     if (f->builtin) { return f->builtin(e, a); }
 
@@ -811,7 +810,6 @@ lval *lval_call(lenv *e, lval *f, lval *a) {
         /* Otherwise return partially evaluated function */
         return lval_copy(f);
     }
-
 }
 
 
