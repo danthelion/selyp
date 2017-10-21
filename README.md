@@ -9,10 +9,6 @@ Based on http://www.buildyourownlisp.com.
 
 ## Build
 ```
-$ cmake .
-```
-or
-```
 $ cc -std=99 -Wall selyp.c mpc.c -leddit -o selyp
 ```
 ## Run
