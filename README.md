@@ -1,6 +1,8 @@
 # Selyp
 A Lisp interpreter implemented in C.
 
+![Selyp Logo](selyp_logo.png "Selyp Logo")
+
 Based on http://www.buildyourownlisp.com.
 
 ## Dependencies
